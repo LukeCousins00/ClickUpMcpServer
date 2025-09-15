@@ -2,10 +2,10 @@ name: Build and Publish to NuGet
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     tags: [ 'v*' ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
   workflow_dispatch:
 
 env:
@@ -41,7 +41,7 @@ jobs:
           # For branch pushes, generate version based on commit count and short SHA
           COMMIT_COUNT=$(git rev-list --count HEAD)
           SHORT_SHA=$(git rev-parse --short HEAD)
-          VERSION="0.1.$COMMIT_COUNT-beta+$SHORT_SHA"
+          VERSION="0.1.$COMMIT_COUNT-beta"
         fi
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "Generated version: $VERSION"
