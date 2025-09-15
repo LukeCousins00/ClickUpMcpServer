@@ -61,8 +61,7 @@ internal class ClickUpTools(IClickUpClient clickUpClient)
         if (response.IsSuccessful)
         {
             var tasks = response.Content!.tasks;
-            // Include metadata like last_page as well
-            var result = new { tasks, last_page = response.Content.last_page };
+            var result = new { tasks, response.Content.last_page };
             return JsonSerializer.Serialize(result, JsonOptions);
         }
 
