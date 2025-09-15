@@ -27,9 +27,9 @@ internal class ClickUpTools(IClickUpClient clickUpClient)
 
     [McpServerTool]
     [Description("Fetches the list of Folders in a Space")]
-    public async Task<string> ListClickUpFoldersAsync(string spaceId)
+    public async Task<string> ListClickUpFoldersAsync(string spaceId, bool archived = false)
     {
-        var response = await clickUpClient.GetFoldersAsync(spaceId);
+        var response = await clickUpClient.GetFoldersAsync(spaceId, archived);
         if (response.IsSuccessful)
         {
             var folders = response.Content!.folders;
@@ -37,5 +37,35 @@ internal class ClickUpTools(IClickUpClient clickUpClient)
         }
 
         return $"Error fetching folders: {response.StatusCode} - {response.Error.Content}";
+    }
+
+    [McpServerTool]
+    [Description("Fetches the lists in a Folder")]
+    public async Task<string> ListClickUpListsAsync(string folderId, bool archived = false)
+    {
+        var response = await clickUpClient.GetListsAsync(folderId, archived);
+        if (response.IsSuccessful)
+        {
+            var lists = response.Content!.lists;
+            return JsonSerializer.Serialize(lists, JsonOptions);
+        }
+
+        return $"Error fetching lists: {response.StatusCode} - {response.Error.Content}";
+    }
+
+    [McpServerTool]
+    [Description("Fetches the tasks in a List with optional filters and paging")]
+    public async Task<string> ListClickUpTasksAsync(string listId, int page = 0, bool archived = false, string[]? statuses = null, string[]? assignees = null, string[]? tags = null)
+    {
+        var response = await clickUpClient.GetTasksAsync(listId, page, archived, statuses, assignees, tags);
+        if (response.IsSuccessful)
+        {
+            var tasks = response.Content!.tasks;
+            // Include metadata like last_page as well
+            var result = new { tasks, last_page = response.Content.last_page };
+            return JsonSerializer.Serialize(result, JsonOptions);
+        }
+
+        return $"Error fetching tasks: {response.StatusCode} - {response.Error.Content}";
     }
 }
