@@ -14,7 +14,7 @@ public class GetSpaces
         public string id { get; set; }
         public string name { get; set; }
         public string color { get; set; }
-        [JsonPropertyName("private")] 
+        [JsonPropertyName("private")]
         public bool Private { get; set; }
         public object? avatar { get; set; }
         public object? admin_can_manage { get; set; }
