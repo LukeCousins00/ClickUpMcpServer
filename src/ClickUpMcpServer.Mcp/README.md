@@ -3,9 +3,8 @@
 This README was created using the C# MCP server project template.
 It demonstrates how you can easily create an MCP server using C# and publish it as a NuGet package.
 
-The MCP server is built as a self-contained application and does not require the .NET runtime to be installed on the target machine.
-However, since it is self-contained, it must be built for each target platform separately.
-By default, the template is configured to build for:
+The MCP server is built as a dotnet global tool package that requires the .NET runtime to be installed on the target machine.
+The project is configured to target .NET 9.0 and supports multiple runtime identifiers:
 * `win-x64`
 * `win-arm64`
 * `osx-arm64`
@@ -55,6 +54,26 @@ Once configured, you can ask Copilot Chat for a random number, for example, `Giv
 
 ## Publishing to NuGet.org
 
+### Automated Publishing via GitHub Actions
+
+This repository includes a GitHub Actions workflow that automatically builds, packs, and publishes the MCP server to NuGet.org. The workflow is triggered on:
+
+- Push to `master` branch (publishes latest version with auto-generated version numbers)
+- Tags matching `v*` pattern (publishes release versions using the tag as version)
+- Pull requests (builds and tests only)
+
+**Version Management:**
+- For pushes to `master`: Automatically generates versions in format `0.1.{COMMIT_COUNT}-beta+{SHORT_SHA}`
+- For tagged releases: Uses the tag name (without 'v' prefix) as the version number
+
+**Setup Required:**
+1. Set the `CLICKUP_MCPSERVER_NUGET_API_KEY` secret in your GitHub repository settings
+2. The workflow publishes to `https://api.nuget.org/v3/index.json`
+
+### Manual Publishing
+
+For manual publishing, you can still use the traditional dotnet commands:
+
 1. Run `dotnet pack -c Release` to create the NuGet package
 2. Publish to NuGet.org with `dotnet nuget push bin/Release/*.nupkg --api-key <your-api-key> --source https://api.nuget.org/v3/index.json`
 
@@ -76,7 +95,7 @@ For both VS Code and Visual Studio, the configuration file uses the following se
       "args": [
         Luke.ClickUpMcpServer,
         "--version",
-        0.1.0-beta,
+        "latest",
         "--yes"
       ],
       "env" : {
