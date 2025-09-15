@@ -4,7 +4,7 @@ This README was created using the C# MCP server project template.
 It demonstrates how you can easily create an MCP server using C# and publish it as a NuGet package.
 
 The MCP server is built as a dotnet global tool package that requires the .NET runtime to be installed on the target machine.
-The project is configured to target .NET 8.0 and supports multiple runtime identifiers:
+The project is configured to target .NET 9.0 and supports multiple runtime identifiers:
 * `win-x64`
 * `win-arm64`
 * `osx-arm64`
@@ -58,9 +58,13 @@ Once configured, you can ask Copilot Chat for a random number, for example, `Giv
 
 This repository includes a GitHub Actions workflow that automatically builds, packs, and publishes the MCP server to NuGet.org. The workflow is triggered on:
 
-- Push to `main` branch (publishes latest version)
-- Tags matching `v*` pattern (publishes release versions)
+- Push to `master` branch (publishes latest version with auto-generated version numbers)
+- Tags matching `v*` pattern (publishes release versions using the tag as version)
 - Pull requests (builds and tests only)
+
+**Version Management:**
+- For pushes to `master`: Automatically generates versions in format `0.1.{COMMIT_COUNT}-beta+{SHORT_SHA}`
+- For tagged releases: Uses the tag name (without 'v' prefix) as the version number
 
 **Setup Required:**
 1. Set the `CLICKUP_MCPSERVER_NUGET_API_KEY` secret in your GitHub repository settings
@@ -91,7 +95,7 @@ For both VS Code and Visual Studio, the configuration file uses the following se
       "args": [
         Luke.ClickUpMcpServer,
         "--version",
-        0.1.1-beta,
+        "latest",
         "--yes"
       ],
       "env" : {
